@@ -1,0 +1,5 @@
+api-keys:
+  - "${AUTH2API_KEY}"
+auth-dir: /data
+port: 8317
+host: "0.0.0.0"
