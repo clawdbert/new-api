@@ -20,10 +20,13 @@ if [ "$SUCCESS" != "true" ]; then
   echo "[init] Login failed: $LOGIN_RESP"
   exit 1
 fi
-echo "[init] Login OK."
+
+USER_ID=$(printf '%s' "$LOGIN_RESP" | jq -r '.data.id')
+echo "[init] Login OK (user id=$USER_ID)."
 
 echo "[init] Fetching existing channels..."
 EXISTING=$(curl -sf -b "$COOKIE_JAR" \
+  -H "New-Api-User: ${USER_ID}" \
   "${NEW_API_URL}/api/channel/?p=1&page_size=100")
 NAMES=$(printf '%s' "$EXISTING" | jq -r '.data.items[].name' 2>/dev/null || true)
 
@@ -36,6 +39,7 @@ create_channel() {
   echo "[init] Creating '$name'..."
   RESULT=$(curl -sf -b "$COOKIE_JAR" -X POST \
     -H "Content-Type: application/json" \
+    -H "New-Api-User: ${USER_ID}" \
     -d "{
       \"mode\": \"single\",
       \"channel\": {
@@ -48,7 +52,7 @@ create_channel() {
         \"group\": \"default\"
       }
     }" \
-    "${NEW_API_URL}/api/channel")
+    "${NEW_API_URL}/api/channel/")
   echo "[init] Result: $RESULT"
 }
 

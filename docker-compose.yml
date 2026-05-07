@@ -106,8 +106,6 @@ services:
     depends_on:
       new-api:
         condition: service_healthy
-      auth2api:
-        condition: service_healthy
     networks:
       - new-api-network
 
