@@ -1,10 +1,10 @@
-FROM node:20-alpine AS build
+FROM node:24.22.1-alpine AS build
 RUN apk add --no-cache git
 RUN git clone --depth 1 https://github.com/AmazingAng/auth2api /src
 WORKDIR /src
 RUN npm ci && npm run build
 
-FROM node:20-alpine
+FROM node:24.22.1-alpine
 RUN apk add --no-cache gettext curl
 WORKDIR /app
 COPY --from=build /src/dist ./dist
