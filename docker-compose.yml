@@ -38,10 +38,6 @@ services:
 #      - GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX
 #      - UMAMI_WEBSITE_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 #      - UMAMI_SCRIPT_URL=https://analytics.umami.is/script.js
-    depends_on:
-      - redis
-      - postgres
-#      - mysql
 #      - LOG_SQL_DSN=postgresql://root:123456@postgres:5432/new-api-log # OPTIONAL: If you want a separate database for logging, uncomment and set this
 #      - LOG_SQL_DSN=clickhouse://default:123456@clickhouse:9000/new_api_logs # OPTIONAL: Use ClickHouse for logs only; also uncomment clickhouse in depends_on and the clickhouse service below
 #      - LOG_SQL_CLICKHOUSE_TTL_DAYS=0 # OPTIONAL: ClickHouse log retention days. Unset or 0 disables automatic deletion; set to e.g. 30 to keep 30 days
@@ -55,6 +51,10 @@ services:
 #      - USER_SESSION_ISSUANCE_WINDOW_SECONDS=86400  # 不得大于 revoked 保留期 (must not exceed revoked retention)
 #      - USER_SESSION_REVOKED_RETENTION_DAYS=7
 #      - USER_SESSION_HOURLY_ALERT_THRESHOLD=5000  # 仅告警，不做全局拒绝 (alert only; never globally rejects login)
+    depends_on:
+      - redis
+      - postgres
+#      - mysql
 #      - clickhouse  # Uncomment if using ClickHouse for LOG_SQL_DSN
     networks:
       - new-api-network

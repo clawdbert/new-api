@@ -21,11 +21,17 @@ if [ "$SUCCESS" != "true" ]; then
   exit 1
 fi
 
-USER_ID=$(printf '%s' "$LOGIN_RESP" | jq -r '.data.id')
+USER_ID=$(printf '%s' "$LOGIN_RESP" | jq -r '.data.user.id')
+ACCESS_TOKEN=$(printf '%s' "$LOGIN_RESP" | jq -r '.data.access_token')
+if [ -z "$ACCESS_TOKEN" ] || [ "$ACCESS_TOKEN" = "null" ]; then
+  echo "[init] Login response carried no access_token: $LOGIN_RESP"
+  exit 1
+fi
 echo "[init] Login OK (user id=$USER_ID)."
 
 echo "[init] Fetching existing channels..."
 EXISTING=$(curl -sf -b "$COOKIE_JAR" \
+  -H "Authorization: Bearer ${ACCESS_TOKEN}" \
   -H "New-Api-User: ${USER_ID}" \
   "${NEW_API_URL}/api/channel/?p=1&page_size=100")
 NAMES=$(printf '%s' "$EXISTING" | jq -r '.data.items[].name' 2>/dev/null || true)
@@ -39,6 +45,7 @@ create_channel() {
   echo "[init] Creating '$name'..."
   RESULT=$(curl -sf -b "$COOKIE_JAR" -X POST \
     -H "Content-Type: application/json" \
+    -H "Authorization: Bearer ${ACCESS_TOKEN}" \
     -H "New-Api-User: ${USER_ID}" \
     -d "{
       \"mode\": \"single\",
